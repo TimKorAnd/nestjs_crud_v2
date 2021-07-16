@@ -1,0 +1,13 @@
+Валідація:
+https://docs.nestjs.com/techniques/validation
+де створювати, чи створювати, інжектитипрямо в мейні app.useGlobalPipes(new ValidationPipe(СЮДИ));
+export interface ValidationPipeOptions extends ValidatorOptions {
+  transform?: boolean;
+  disableErrorMessages?: boolean;
+  exceptionFactory?: (errors: ValidationError[]) => any;
+}
+
+? зафіксувати версії в пекедж.джейсон прибираючи ^
+
+Конфігурація, як задіяти .енв
+ConfigService.get<string>('MONGODB_CONNECTION_STRING'),
