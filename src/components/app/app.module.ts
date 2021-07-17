@@ -3,8 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersController } from '../users/users.controller';
-import { UsersService } from '../users/users.service';
+import { UsersModule } from '../users/users.module';
+import { RoomsModule } from '../rooms/rooms.module';
+import { MessagesModule } from '../messages/messages.module';
 
 @Module({
   imports: [
@@ -12,17 +13,17 @@ import { UsersService } from '../users/users.service';
       envFilePath: ['.env.development.local', '.env.development'],
       isGlobal: true,
     }),
-    MongooseModule.forRoot(
-      'mongodb+srv://userMongoDB:49tiGiRqaWxNBGH@mongoclusterexpresscrud.4pswn.mongodb.net/mongoDBExpressCRUD?retryWrites=true&w=majority',
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        useCreateIndex: true,
-      },
-    ),
+    MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    }),
+    UsersModule,
+    RoomsModule,
+    MessagesModule,
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

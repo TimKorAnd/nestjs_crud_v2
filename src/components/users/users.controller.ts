@@ -10,6 +10,10 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
+import { Types } from 'mongoose';
+import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -22,22 +26,24 @@ export class UsersController {
 
   @Get()
   findAll() {
-    //return this.usersService.findAll();
-    return { omg: 'users.controller' };
+    return this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  update(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.usersService.remove(id);
   }
 }

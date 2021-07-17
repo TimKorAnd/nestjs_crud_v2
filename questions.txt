@@ -1,3 +1,5 @@
+updateDTO create! + test populate in update
+
 Валідація:
 https://docs.nestjs.com/techniques/validation
 де створювати, чи створювати, інжектитипрямо в мейні app.useGlobalPipes(new ValidationPipe(СЮДИ));
@@ -11,3 +13,39 @@ export interface ValidationPipeOptions extends ValidatorOptions {
 
 Конфігурація, як задіяти .енв
 ConfigService.get<string>('MONGODB_CONNECTION_STRING'),
+
+
+як у "шпаргалці"
+app.useGlobalFilters(new AllExceptionFilter()) - глобальний обробник помилок?
+
+schemas що то за тип такий?
+export type UserDocument = User & Document;
+
+що з асинхронністю? треба в контроллері, чи в моделі?
+
+
+
+export class CreateRoomDto {
+  @Length(6, 30)
+  @IsAlphanumeric()
+  title: string;
+  @IsMongoId()
+  ownerId: string;
+  @Length(6, 30)
+  description: string;
+  @IsArray()
+  @MaxLength(20, {
+    each: true,
+  })
+  usersId: string[]; як валідувати масив монгоАйді
+}
+
+
++++++++++++++++
+створити
+
+ app.enableCors();
+
+ щоб контролери повертали правильні речі
+
+ автотест круд в постмані
