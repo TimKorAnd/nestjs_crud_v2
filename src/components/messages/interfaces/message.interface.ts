@@ -4,6 +4,6 @@ import { Types } from 'mongoose';
 
 export interface IMessage {
   ownerId?: User | Types.ObjectId | string;
-  roomId?: Room | Types.ObjectId | string;
+  roomId?: Room | Types.ObjectId;
   text?: string;
 }

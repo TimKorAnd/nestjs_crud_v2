@@ -46,8 +46,12 @@ export class MessagesController {
     return this.messagesService.remove(id);
   }
 
+  /**
+   * return all messages created by user
+   * @param id - user id
+   */
   @Get('/byuser/:id')
   findAllByUser(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.messagesService.findAllByField({ ownerId: id.toString() });
+    return this.messagesService.findAllByField({ ownerId: id });
   }
 }

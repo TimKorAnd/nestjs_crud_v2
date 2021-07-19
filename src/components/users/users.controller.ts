@@ -13,6 +13,8 @@ import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { IUser } from './interfaces/user.interface';
 import { RoomsService } from '../rooms/rooms.service';
+import { IRoom } from '../rooms/interfaces/room.interface';
+import { Room } from '../rooms/schema/room.schema';
 /*import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
 import { UserEntity } from './entities/user.entity';*/
 
@@ -20,7 +22,7 @@ import { UserEntity } from './entities/user.entity';*/
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    // private readonly roomsService: RoomsService,
+    private readonly roomsService: RoomsService,
   ) {}
 
   @Post()
@@ -51,32 +53,40 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  /*@Post('jointoroom')
+  /**
+   * return users in room with populate
+   * @param id - room id
+   */
+  @Get('inroom/:id')
+  findAllUsersInRoom(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.usersService.findAll({ roomId: id });
+  }
+
+  @Post('join-to-room')
   async joinToRoom(
     @Body('userId', ParseObjectIdPipe) userId: Types.ObjectId,
-    @Body('RoomId', ParseObjectIdPipe) roomId: Types.ObjectId,
+    @Body('roomId', ParseObjectIdPipe) roomId: Types.ObjectId,
   ) {
-    try {
-      const joinRoomId = roomId;
-      const leftRoomId = (
-        await this.usersService.update(
-          userId,
-          { roomId: joinRoomId },
-          { new: false },
-        )
-      )?.roomId;
-      // TODO check for user exists (validation Mongo?)
-      // TODO if (leftRoomId.toString() === joinRoomId.toString() {...})
-      const leftRoom = await this.roomsService.leaveUserFromRoom(
+    const joinRoomId: Types.ObjectId = roomId;
+    /* write new roomId in user*/
+    const user: IUser = await this.usersService.update(
+      userId,
+      { roomId: joinRoomId },
+      { new: false },
+    );
+    const leftRoom: IRoom = user.roomId as IRoom; // TODO is normal approach?
+    const leftRoomId: Types.ObjectId = leftRoom?._id;
+    // TODO check for user exists (validation Mongo?)
+    // TODO if (leftRoomId.toString() === joinRoomId.toString() {...})
+    if (leftRoomId) {
+      const leftRoom1 = await this.roomsService.leaveUserFromRoom(
         userId,
         leftRoomId,
       );
-      const joinRoom = await this.roomsService.addUserToRoom(
-        userId,
-        joinRoomId,
-      );
+    }
+    const joinRoom = await this.roomsService.addUserToRoom(userId, joinRoomId);
 
-      /*res.status(200).json({
+    /*res.status(200).json({
         message:
           {
             status: 'successful',
@@ -84,9 +94,28 @@ export class UsersController {
             leftRoomId: leftRoom?._id ?? 'not left the room, because user did`t have a room',
             joinRoomId: joinRoom?._id ?? 'not join the room, because room not exists',
           },
-      });*/
-  /* } catch (err) {
-      // this.errorHandler(err, res);
+      }); */
+  }
+
+  @Post('leave-from-room')
+  async leaveFromRoom(
+    @Body('userId', ParseObjectIdPipe) userId: Types.ObjectId,
+    @Body('roomId', ParseObjectIdPipe) roomId: Types.ObjectId,
+  ) {
+    const user: IUser = await this.usersService.update(
+      userId,
+      { roomId: null },
+      { new: false },
+    );
+    const leftRoom: IRoom = user.roomId as IRoom; // TODO is normal approach?
+    const leftRoomId: Types.ObjectId = leftRoom?._id;
+    if (!leftRoomId) {
+      return 'no roomId in user';
     }
-  } */
+    const leftRoom1 = await this.roomsService.leaveUserFromRoom(
+      userId,
+      leftRoomId,
+    );
+    return leftRoom;
+  }
 }

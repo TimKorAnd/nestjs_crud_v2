@@ -1,6 +1,7 @@
 import { IsEmail, IsMongoId, IsOptional, Length } from 'class-validator';
 import { Room } from '../../rooms/schema/room.schema';
 import { IUser } from '../interfaces/user.interface';
+import { Types } from 'mongoose';
 
 export class UpdateUserDto implements IUser {
   @Length(3, 30)
@@ -14,5 +15,5 @@ export class UpdateUserDto implements IUser {
   avatarUrl?: string;
   @IsOptional()
   @IsMongoId()
-  roomId?: Room;
+  roomId?: Types.ObjectId;
 }

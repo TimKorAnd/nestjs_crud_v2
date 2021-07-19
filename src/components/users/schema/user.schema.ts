@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Room } from '../../rooms/schema/room.schema';
-import { Types } from 'mongoose';
 import { IUser } from '../interfaces/user.interface';
+import * as mongoose from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -24,7 +24,7 @@ export class User implements IUser {
   @Prop({ type: String, default: null, isOptional: true })
   avatarUrl: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Room' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Room' })
   roomId: Room;
 }
 

@@ -53,22 +53,22 @@ export class RoomsService {
   ): Promise<IRoom> {
     return this.roomModel
       .findOneAndUpdate(
-        roomId,
-        { $addToSet: { usersId: userId.toString() } },
+        { _id: roomId },
+        { $addToSet: { usersId: userId } },
         { new: true },
       )
       .lean()
       .exec();
   }
 
-  leaveUserFromRoom(
+  async leaveUserFromRoom(
     userId: Types.ObjectId,
     roomId: Types.ObjectId,
   ): Promise<IRoom> {
     return this.roomModel
       .findOneAndUpdate(
-        roomId,
-        { $pull: { usersId: userId.toString() } },
+        { _id: roomId },
+        { $pull: { usersId: userId } },
         { new: true },
       )
       .lean()

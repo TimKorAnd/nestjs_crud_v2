@@ -5,6 +5,31 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
+
+Написати API на NestJs де буде 3 - и сутності:
+
+    user = {
+    name: String,
+    email: String,
+    password: String,
+    roomId: ObjectId,
+    }
+
+    room = {
+    title: String,
+    ownerId: ObjectId,
+    description: String,
+    usersId: [ObjectId],
+    }
+    message = {
+    ownerId: ObjectId,
+    roomId: ObjectId,
+    text: String,
+    }
+
+CRUD для кожної з них + валідація даних на рівні DTO.
+
+
 Додатково написати роути:
 - POST users/join-to-room
 - POST users/leave-from-room
@@ -12,12 +37,12 @@
   
 Розширити функціонал:
   - вибрати всі повідомлення для конкретного користувача
-    .../rooms/usersin/:id (rooms.controller)
+    .../messages/byuser/:id (messages.controller)
 
     
   - вибрати всіх користувачів для конкретної кімнати
-    .../messages/byuser/:id (messages.controller)
-    
+    w/o populate .../rooms/usersin/:id (rooms.controller)
+    with populate .../users/inroom/:id (users.controller)
 
   - вибрати всі кімнати які створив користувач
     .../rooms/byowner/:id (rooms.controller)

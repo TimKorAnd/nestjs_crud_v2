@@ -46,7 +46,6 @@ export class MessagesService {
   }
 
   findAllByField(field: IMessage): Promise<IMessage[]> {
-    console.log(field);
     return this.messageModel
       .find(field)
       .populate(MessagesService.populateFields)

@@ -46,14 +46,23 @@ export class RoomsController {
     return this.roomsService.remove(id);
   }
 
+  /**
+   * return users in room without populate (fast),
+   * use ...users/inroom/:id from usersController, for that same with populate
+   * @param id - room id
+   */
   @Get('usersin/:id')
   async getUsersInRoom(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     const room: IRoom = await this.roomsService.findOne(id);
     return room.usersId;
   }
 
+  /**
+   * return rooms created by user
+   * @param id user id
+   */
   @Get('byowner/:id')
   findAllRoomsByOwner(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.roomsService.findAll({ ownerId: id.toString() });
+    return this.roomsService.findAll({ ownerId: id });
   }
 }
