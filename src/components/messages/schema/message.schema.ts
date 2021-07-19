@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { User } from '../../users/schema/user.schema';
 import { Room } from '../../rooms/schema/room.schema';
 import { Types } from 'mongoose';
+import { IMessage } from '../interfaces/message.interface';
 
 export type MessageDocument = Message & Document;
 
@@ -11,7 +12,7 @@ export type MessageDocument = Message & Document;
   timestamps: true,
   collection: 'messages',
 })
-export class Message {
+export class Message implements IMessage {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   ownerId: User;
 

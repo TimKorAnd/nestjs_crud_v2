@@ -1,3 +1,4 @@
+/*
 import {
   PipeTransform,
   Injectable,
@@ -26,3 +27,4 @@ export class ValidationPipe implements PipeTransform<any> {
     return !types.includes(metatype);
   }
 }
+*/

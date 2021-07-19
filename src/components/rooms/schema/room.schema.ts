@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { User } from '../../users/schema/user.schema';
 import { Types } from 'mongoose';
+import { IRoom } from '../interfaces/room.interface';
 
 export type RoomDocument = Room & Document;
 
@@ -10,7 +11,7 @@ export type RoomDocument = Room & Document;
   timestamps: true,
   collection: 'rooms',
 })
-export class Room {
+export class Room implements IRoom {
   @Prop({ type: String, required: true, unique: true })
   title: string;
 

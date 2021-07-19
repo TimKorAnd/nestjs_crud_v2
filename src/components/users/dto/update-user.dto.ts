@@ -1,4 +1,18 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { IsEmail, IsMongoId, IsOptional, Length } from 'class-validator';
+import { Room } from '../../rooms/schema/room.schema';
+import { IUser } from '../interfaces/user.interface';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto implements IUser {
+  @Length(3, 30)
+  @IsOptional()
+  name?: string;
+  @IsOptional()
+  @Length(6, 30)
+  password?: string;
+  @IsOptional()
+  @Length(3, 30)
+  avatarUrl?: string;
+  @IsOptional()
+  @IsMongoId()
+  roomId?: Room;
+}

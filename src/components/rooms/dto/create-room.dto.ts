@@ -1,20 +1,15 @@
-import {
-  IsArray,
-  IsAlphanumeric,
-  MaxLength,
-  Length,
-  IsMongoId,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsArray, IsAlphanumeric, Length, IsMongoId } from 'class-validator';
+import { User } from '../../users/schema/user.schema';
+import { IRoom } from '../interfaces/room.interface';
 
-export class CreateRoomDto {
+export class CreateRoomDto implements IRoom {
   @Length(6, 30)
   @IsAlphanumeric()
   title: string;
   @IsMongoId()
-  ownerId: string;
+  ownerId: User;
   @Length(6, 30)
   description: string;
   @IsArray()
-  usersId: string[];
+  usersId: User[];
 }

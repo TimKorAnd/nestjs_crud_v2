@@ -12,6 +12,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import { IMessage } from './interfaces/message.interface';
 
 @Controller('messages')
 export class MessagesController {
@@ -43,5 +44,10 @@ export class MessagesController {
   @Delete(':id')
   remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.messagesService.remove(id);
+  }
+
+  @Get('/byuser/:id')
+  findAllByUser(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.messagesService.findAllByField({ ownerId: id.toString() });
   }
 }

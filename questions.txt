@@ -1,17 +1,24 @@
-updateDTO create! + test populate in update
+when populate відсутню в базі айді, то буде нулл, чи то норм для фронта?
+
+як позбутися updateRoomDto: UpdateRoomDto в сервісах
+
+global exception handler create
+  ERROR [ExceptionsHandler] E11000 duplicate key error collection: mongoDBExpressCRUD.users index: email_1 dup key: { email: "newEmail@new.email" }
+MongoError: E11000 duplicate key error collection: mongoDBExpressCRUD.users index: email_1 dup key: { email: "newEmail@new.email" }
+
 
 Валідація:
 https://docs.nestjs.com/techniques/validation
-де створювати, чи створювати, інжектитипрямо в мейні app.useGlobalPipes(new ValidationPipe(СЮДИ));
+де створювати, чи створювати, інжектити прямо в мейні app.useGlobalPipes(new ValidationPipe(СЮДИ));
 export interface ValidationPipeOptions extends ValidatorOptions {
   transform?: boolean;
   disableErrorMessages?: boolean;
   exceptionFactory?: (errors: ValidationError[]) => any;
 }
 
-? зафіксувати версії в пекедж.джейсон прибираючи ^
+? фіксувати версії в пекедж.джейсон прибираючи ^
 
-Конфігурація, як задіяти .енв
+Конфігурація, як задіяти корректно .енв
 ConfigService.get<string>('MONGODB_CONNECTION_STRING'),
 
 
@@ -39,6 +46,8 @@ export class CreateRoomDto {
   })
   usersId: string[]; як валідувати масив монгоАйді
 }
+
+recipes подключення бд трохи відрізняється
 
 
 +++++++++++++++

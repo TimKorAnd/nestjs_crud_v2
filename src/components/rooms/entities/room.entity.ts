@@ -1,1 +1,1 @@
-export class Room {}
+export class RoomEntity {}

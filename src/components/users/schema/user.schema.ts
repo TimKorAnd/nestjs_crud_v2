@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Room } from '../../rooms/schema/room.schema';
 import { Types } from 'mongoose';
+import { IUser } from '../interfaces/user.interface';
 
 export type UserDocument = User & Document;
 
@@ -10,7 +11,7 @@ export type UserDocument = User & Document;
   timestamps: true,
   collection: 'users',
 })
-export class User {
+export class User implements IUser {
   @Prop({ type: String, required: true })
   name: string;
 
@@ -20,7 +21,7 @@ export class User {
   @Prop({ type: String, required: true })
   password: string;
 
-  @Prop({ type: String, default: null })
+  @Prop({ type: String, default: null, isOptional: true })
   avatarUrl: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Room' })

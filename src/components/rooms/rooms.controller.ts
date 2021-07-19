@@ -12,6 +12,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import { IRoom } from './interfaces/room.interface';
 
 @Controller('rooms')
 export class RoomsController {
@@ -33,12 +34,26 @@ export class RoomsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
+  update(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() updateRoomDto: UpdateRoomDto,
+  ) {
+    return this.roomsService.update(id, updateRoomDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(+id);
+  remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.roomsService.remove(id);
+  }
+
+  @Get('usersin/:id')
+  async getUsersInRoom(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    const room: IRoom = await this.roomsService.findOne(id);
+    return room.usersId;
+  }
+
+  @Get('byowner/:id')
+  findAllRoomsByOwner(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    return this.roomsService.findAll({ ownerId: id.toString() });
   }
 }
