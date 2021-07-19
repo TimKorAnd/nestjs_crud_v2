@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Types } from 'mongoose';
-import { Room, RoomDocument } from './schema/room.schema';
+import { Room } from './schema/room.schema';
 import { User } from '../users/schema/user.schema';
 import { IRoom } from './interfaces/room.interface';
 

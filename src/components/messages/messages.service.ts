@@ -1,20 +1,20 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateMessageDto } from './dto/create-message.dto';
 import { Types } from 'mongoose';
-import { Message, MessageDocument } from './schema/message.schema';
+import { Message } from './schema/message.schema';
 import { IMessage } from './interfaces/message.interface';
 
 @Injectable()
 export class MessagesService {
   static populateFields = ['ownerId', 'roomId'];
+
   constructor(
     @InjectModel(Message.name) private messageModel: Model<IMessage>,
   ) {}
 
-  create(createMessageDto: CreateMessageDto) {
-    return this.messageModel.create(createMessageDto);
+  create(create: IMessage): Promise<IMessage> {
+    return this.messageModel.create(create);
   }
 
   findAll(): Promise<IMessage[]> {
