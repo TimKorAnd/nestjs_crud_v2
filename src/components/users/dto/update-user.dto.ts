@@ -3,7 +3,7 @@ import { Room } from '../../rooms/schema/room.schema';
 import { IUser } from '../interfaces/user.interface';
 import { Types } from 'mongoose';
 
-export class UpdateUserDto implements IUser {
+export class UpdateUserDto {
   @Length(3, 30)
   @IsOptional()
   name?: string;
@@ -15,5 +15,5 @@ export class UpdateUserDto implements IUser {
   avatarUrl?: string;
   @IsOptional()
   @IsMongoId()
-  roomId?: Types.ObjectId;
+  roomId?: string;
 }

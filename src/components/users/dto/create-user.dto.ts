@@ -3,7 +3,7 @@ import { Room } from '../../rooms/schema/room.schema';
 import { IUser } from '../interfaces/user.interface';
 import { Types } from 'mongoose';
 
-export class CreateUserDto implements IUser {
+export class CreateUserDto {
   @Length(3, 30)
   name: string;
   @IsEmail()
@@ -15,5 +15,6 @@ export class CreateUserDto implements IUser {
   @IsOptional()
   avatarUrl?: string;
   @IsMongoId()
-  roomId: Types.ObjectId;
+  roomId: Room; // TODO if set string type, than Dto not compatible with IUserUpdate (controller  to service)
 }
+// TODO remove fields which are not used for user create

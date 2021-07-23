@@ -2,11 +2,6 @@ when populate відсутню в базі айді, то буде нулл, ч�
 
 як позбутися updateRoomDto: UpdateRoomDto в сервісах
 
-global exception handler create
-  ERROR [ExceptionsHandler] E11000 duplicate key error collection: mongoDBExpressCRUD.users index: email_1 dup key: { email: "newEmail@new.email" }
-MongoError: E11000 duplicate key error collection: mongoDBExpressCRUD.users index: email_1 dup key: { email: "newEmail@new.email" }
-
-
 Валідація:
 https://docs.nestjs.com/techniques/validation
 де створювати, чи створювати, інжектити прямо в мейні app.useGlobalPipes(new ValidationPipe(СЮДИ));
@@ -58,3 +53,114 @@ recipes подключення бд трохи відрізняється
  щоб контролери повертали правильні речі
 
  автотест круд в постмані
+
+
+
+Pad-5-15ARE05:~/Documents/NodeLearn/nest-crud-v1.0$ npm install --save @nestjs/terminus
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR!
+npm ERR! While resolving: nest-crud-v1@0.0.1
+npm ERR! Found: @nestjs/common@8.0.4
+npm ERR! node_modules/@nestjs/common
+npm ERR!   @nestjs/common@"^8.0.4" from the root project
+npm ERR!
+npm ERR! Could not resolve dependency:
+npm ERR! peer @nestjs/common@"^7.0.0" from @nestjs/terminus@7.2.0
+npm ERR! node_modules/@nestjs/terminus
+npm ERR!   @nestjs/terminus@"*" from the root project
+npm ERR!
+npm ERR! Fix the upstream dependency conflict, or retry
+npm ERR! this command with --force, or --legacy-peer-deps
+npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+npm ERR!
+npm ERR! See /home/timkor/.npm/eresolve-report.txt for a full report.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/timkor/.npm/_logs/2021-07-23T07_33_40_639Z-debug.log
+timkor@timkor-IdeaPad-5-15ARE05:~/Documents/NodeLearn/nest-crud-v1.0$
+
+
+
+
+
+
+
+
+ {
+   "name": "nest-crud-v1",
+   "version": "0.0.1",
+   "description": "",
+   "author": "",
+   "private": true,
+   "license": "UNLICENSED",
+   "scripts": {
+     "prebuild": "rimraf dist",
+     "build": "nest build",
+     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+     "start": "nest start",
+     "start:dev": "nest start --watch",
+     "start:debug": "nest start --debug --watch",
+     "start:prod": "node dist/main",
+     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+     "test": "jest",
+     "test:watch": "jest --watch",
+     "test:cov": "jest --coverage",
+     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+     "test:e2e": "jest --config ./test/jest-e2e.json"
+   },
+   "dependencies": {
+     "@nestjs/common": "^8.0.0",
+     "@nestjs/config": "^1.0.0",
+     "@nestjs/core": "^8.0.0",
+     "@nestjs/mapped-types": "*",
+     "@nestjs/mongoose": "^8.0.0",
+     "@nestjs/platform-express": "^8.0.0",
+     "@nestjs/swagger": "^5.0.8",
+     "mongoose": "^5.13.3",
+     "reflect-metadata": "^0.1.13",
+     "rimraf": "^3.0.2",
+     "rxjs": "^7.2.0",
+     "swagger-ui-express": "^4.1.6"
+   },
+   "devDependencies": {
+     "@nestjs/cli": "^8.0.0",
+     "@nestjs/schematics": "^8.0.0",
+     "@nestjs/testing": "^8.0.0",
+     "@types/express": "^4.17.13",
+     "@types/jest": "^26.0.24",
+     "@types/node": "^16.0.0",
+     "@types/supertest": "^2.0.11",
+     "@typescript-eslint/eslint-plugin": "^4.28.2",
+     "@typescript-eslint/parser": "^4.28.2",
+     "eslint": "^7.30.0",
+     "eslint-config-prettier": "^8.3.0",
+     "eslint-plugin-prettier": "^3.4.0",
+     "jest": "^27.0.6",
+     "prettier": "^2.3.2",
+     "supertest": "^6.1.3",
+     "ts-jest": "^27.0.3",
+     "ts-loader": "^9.2.3",
+     "ts-node": "^10.0.0",
+     "tsconfig-paths": "^3.10.1",
+     "typescript": "^4.3.5"
+   },
+   "jest": {
+     "moduleFileExtensions": [
+       "js",
+       "json",
+       "ts"
+     ],
+     "rootDir": "src",
+     "testRegex": ".*\\.spec\\.ts$",
+     "transform": {
+       "^.+\\.(t|j)s$": "ts-jest"
+     },
+     "collectCoverageFrom": [
+       "**/*.(t|j)s"
+     ],
+     "coverageDirectory": "../coverage",
+     "testEnvironment": "node"
+   }
+ }
+

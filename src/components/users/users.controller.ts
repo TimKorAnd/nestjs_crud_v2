@@ -14,9 +14,8 @@ import { Types } from 'mongoose';
 import { IUser } from './interfaces/user.interface';
 import { RoomsService } from '../rooms/rooms.service';
 import { IRoom } from '../rooms/interfaces/room.interface';
-import { Room } from '../rooms/schema/room.schema';
-/*import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
-import { UserEntity } from './entities/user.entity';*/
+import { IRoomReturned } from '../rooms/interfaces/room.returned.interface';
+import { IUserReturned } from './interfaces/user.returned.interface';
 
 @Controller('users')
 export class UsersController {
@@ -74,7 +73,7 @@ export class UsersController {
       { roomId: joinRoomId },
       { new: false },
     );
-    const leftRoom: IRoom = user.roomId as IRoom; // TODO is normal approach?
+    const leftRoom: IRoomReturned = user.roomId as IRoomReturned; // TODO is normal approach?
     const leftRoomId: Types.ObjectId = leftRoom?._id;
     // TODO check for user exists (validation Mongo?)
     // TODO if (leftRoomId.toString() === joinRoomId.toString() {...})
@@ -102,12 +101,12 @@ export class UsersController {
     @Body('userId', ParseObjectIdPipe) userId: Types.ObjectId,
     @Body('roomId', ParseObjectIdPipe) roomId: Types.ObjectId,
   ) {
-    const user: IUser = await this.usersService.update(
+    const user: IUserReturned = await this.usersService.update(
       userId,
       { roomId: null },
       { new: false },
     );
-    const leftRoom: IRoom = user.roomId as IRoom; // TODO is normal approach?
+    const leftRoom: IRoomReturned = user.roomId as IRoomReturned; // TODO is normal approach?
     const leftRoomId: Types.ObjectId = leftRoom?._id;
     if (!leftRoomId) {
       return 'no roomId in user';

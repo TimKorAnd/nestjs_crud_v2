@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { Message } from './schema/message.schema';
 import { IMessage } from './interfaces/message.interface';
+import { IMessageUpdate } from './interfaces/message.update.interface';
+import { IMessageReturned } from './interfaces/message.returned.interface';
 
 @Injectable()
 export class MessagesService {
@@ -13,11 +15,11 @@ export class MessagesService {
     @InjectModel(Message.name) private messageModel: Model<IMessage>,
   ) {}
 
-  create(create: IMessage): Promise<IMessage> {
+  create(create: IMessageUpdate): Promise<IMessageReturned> {
     return this.messageModel.create(create);
   }
 
-  findAll(): Promise<IMessage[]> {
+  findAll(): Promise<IMessageReturned[]> {
     return this.messageModel
       .find()
       .populate(MessagesService.populateFields)
@@ -25,7 +27,7 @@ export class MessagesService {
       .exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<IMessage> {
+  findOne(id: Types.ObjectId): Promise<IMessageReturned> {
     return this.messageModel
       .findOne(id)
       .populate(MessagesService.populateFields)
@@ -33,7 +35,10 @@ export class MessagesService {
       .exec();
   }
 
-  update(id: Types.ObjectId, update: IMessage): Promise<IMessage> {
+  update(
+    id: Types.ObjectId,
+    update: IMessageUpdate,
+  ): Promise<IMessageReturned> {
     return this.messageModel
       .findOneAndUpdate(id, { $set: update }, { new: true })
       .populate(MessagesService.populateFields)
@@ -45,7 +50,7 @@ export class MessagesService {
     return this.messageModel.deleteOne({ _id: id }).lean().exec();
   }
 
-  findAllByField(field: IMessage): Promise<IMessage[]> {
+  findAllByField(field: IMessageUpdate): Promise<IMessageReturned[]> {
     return this.messageModel
       .find(field)
       .populate(MessagesService.populateFields)

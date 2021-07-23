@@ -13,6 +13,7 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { IRoom } from './interfaces/room.interface';
+import { IRoomReturned } from './interfaces/room.returned.interface';
 
 @Controller('rooms')
 export class RoomsController {
@@ -53,7 +54,7 @@ export class RoomsController {
    */
   @Get('usersin/:id')
   async getUsersInRoom(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    const room: IRoom = await this.roomsService.findOne(id);
+    const room: IRoomReturned = await this.roomsService.findOne(id);
     return room.usersId;
   }
 

@@ -3,10 +3,13 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private readonly start: number;
+  constructor(private readonly appService: AppService) {
+    this.start = Date.now();
+  }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('app/healthcheck')
+  healthcheck(): string {
+    return this.appService.healthcheck(this.start);
   }
 }

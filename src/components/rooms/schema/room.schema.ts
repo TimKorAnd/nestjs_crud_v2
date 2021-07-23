@@ -11,7 +11,7 @@ export type RoomDocument = Room & Document;
   timestamps: true,
   collection: 'rooms',
 })
-export class Room implements IRoom {
+export class Room {
   @Prop({ type: String, required: true, unique: true })
   title: string;
 

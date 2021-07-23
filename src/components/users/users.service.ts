@@ -3,20 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Types } from 'mongoose';
-import { User } from './schema/user.schema';
+import { User, UserDocument } from './schema/user.schema';
 import { IUser } from './interfaces/user.interface';
 import { Room } from '../rooms/schema/room.schema';
+import { IUserReturned } from './interfaces/user.returned.interface';
+import { IUserUpdate } from './interfaces/user.update.interface';
 
 @Injectable()
 export class UsersService {
   static populateFields = [{ path: 'roomId', model: Room }];
   constructor(@InjectModel(User.name) private userModel: Model<IUser>) {}
 
-  create(createUserDto: CreateUserDto): Promise<IUser> {
-    return this.userModel.create(createUserDto);
+  create(create: IUserUpdate): Promise<IUserReturned> {
+    return this.userModel.create(create);
   }
 
-  findAll(field?: IUser): Promise<IUser[]> {
+  findAll(field?: IUserUpdate): Promise<IUserReturned[]> {
     return this.userModel
       .find(field)
       .populate(UsersService.populateFields)
@@ -24,7 +26,7 @@ export class UsersService {
       .exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<IUser> {
+  findOne(id: Types.ObjectId): Promise<IUserReturned> {
     return this.userModel
       .findOne(id)
       .populate(UsersService.populateFields)
@@ -34,10 +36,10 @@ export class UsersService {
 
   update(
     id: Types.ObjectId,
-    update: IUser,
+    update: IUserUpdate,
     options: { new: boolean } = { new: true },
     populateParams: any[] = UsersService.populateFields,
-  ): Promise<IUser> {
+  ): Promise<any> {
     return this.userModel
       .findOneAndUpdate({ _id: id }, { $set: update }, options)
       .populate(UsersService.populateFields)

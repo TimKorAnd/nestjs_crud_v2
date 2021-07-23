@@ -1,9 +1,8 @@
 import { IsMongoId, IsOptional, Length } from 'class-validator';
 import { Room } from '../../rooms/schema/room.schema';
-import { IRoom } from '../../rooms/interfaces/room.interface';
-import { IMessage } from '../interfaces/message.interface';
+import { IMessageUpdate } from '../interfaces/message.update.interface';
 
-export class UpdateMessageDto implements IMessage {
+export class UpdateMessageDto implements IMessageUpdate {
   @IsOptional()
   @IsMongoId()
   roomId: Room;

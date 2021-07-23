@@ -12,7 +12,7 @@ export type MessageDocument = Message & Document;
   timestamps: true,
   collection: 'messages',
 })
-export class Message implements IMessage {
+export class Message {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   ownerId: User;
 

@@ -6,6 +6,8 @@ import { Types } from 'mongoose';
 import { Room } from './schema/room.schema';
 import { User } from '../users/schema/user.schema';
 import { IRoom } from './interfaces/room.interface';
+import { IRoomReturned } from './interfaces/room.returned.interface';
+import { IRoomUpdate } from './interfaces/room.update.interface';
 
 @Injectable()
 export class RoomsService {
@@ -15,11 +17,11 @@ export class RoomsService {
   ];
   constructor(@InjectModel(Room.name) private roomModel: Model<IRoom>) {}
 
-  create(createRoomDto: CreateRoomDto): Promise<IRoom> {
-    return this.roomModel.create(createRoomDto);
+  create(create: IRoomUpdate): Promise<IRoomReturned> {
+    return this.roomModel.create(create);
   }
 
-  findAll(field?: IRoom): Promise<IRoom[]> {
+  findAll(field?: IRoomUpdate): Promise<IRoomReturned[]> {
     return this.roomModel
       .find(field)
       .populate(RoomsService.populateFields)
@@ -27,7 +29,7 @@ export class RoomsService {
       .exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<IRoom> {
+  findOne(id: Types.ObjectId): Promise<IRoomReturned> {
     return this.roomModel
       .findOne(id)
       .populate(RoomsService.populateFields)
@@ -35,7 +37,7 @@ export class RoomsService {
       .exec();
   }
 
-  update(id: Types.ObjectId, update: IRoom): Promise<IRoom> {
+  update(id: Types.ObjectId, update: IRoomUpdate): Promise<IRoomReturned> {
     return this.roomModel
       .findOneAndUpdate({ _id: id }, { $set: update }, { new: true })
       .populate(RoomsService.populateFields)
@@ -50,7 +52,7 @@ export class RoomsService {
   addUserToRoom(
     userId: Types.ObjectId,
     roomId: Types.ObjectId,
-  ): Promise<IRoom> {
+  ): Promise<IRoomReturned> {
     return this.roomModel
       .findOneAndUpdate(
         { _id: roomId },
@@ -64,7 +66,7 @@ export class RoomsService {
   async leaveUserFromRoom(
     userId: Types.ObjectId,
     roomId: Types.ObjectId,
-  ): Promise<IRoom> {
+  ): Promise<IRoomReturned> {
     return this.roomModel
       .findOneAndUpdate(
         { _id: roomId },

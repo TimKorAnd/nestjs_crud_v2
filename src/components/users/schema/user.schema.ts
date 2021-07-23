@@ -11,7 +11,7 @@ export type UserDocument = User & Document;
   timestamps: true,
   collection: 'users',
 })
-export class User implements IUser {
+export class User {
   @Prop({ type: String, required: true })
   name: string;
 
