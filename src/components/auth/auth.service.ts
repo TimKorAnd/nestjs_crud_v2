@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -14,8 +14,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  /*  async login(userSignIn: IAuthLoginInput) {
-
+  async login(userSignIn: IAuthLoginInput) {
+    console.log('userSignIn');
+    console.log(userSignIn);
     const userFromDB: IUserReturned = await this.usersService.findOneByEmail(
       userSignIn.email,
     ); // TODO can we return user from guard for decrease DB query? YES!
@@ -25,17 +26,25 @@ export class AuthService {
       const payload = {
         sub: userFromDB._id,
         email: userFromDB.email,
+        role: userFromDB.role,
       };
-      const accesToken = this.jwtService.sign(payload, )
+      const accessToken = this.jwtService.sign(payload);
+      const refreshToken = this.jwtService.sign(payload); // TODO how refresh generate?
+      return {
+        user: userFromDB,
+        accessToken,
+        refreshToken,
+      };
     }
-  }*/
+    throw new NotFoundException('User not found');
+  }
 
-  async login(user: any) {
+  /*async login(user: any) {
     const payload = { username: user.username, sub: user._id };
     return {
       access_token: this.jwtService.sign(payload),
     };
-  }
+  }*/
 
   // async validateUser(email: string, pass: string): Promise<boolean> {
   async validateUser(email: string, pass: string): Promise<any> {

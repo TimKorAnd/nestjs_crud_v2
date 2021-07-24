@@ -1,6 +1,8 @@
-import { IsEmail, IsMongoId, IsOptional, Length } from 'class-validator';
+import { IsEmail, IsEnum, IsMongoId, IsOptional, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IUserUpdate } from '../interfaces/user.update.interface';
+import { UserRoleEnum } from '../enums/user.role.enum';
+import { UserStatusEnum } from '../enums/user.status.enum';
 
 export class UpdateUserDto implements IUserUpdate {
   @ApiProperty()
@@ -22,4 +24,12 @@ export class UpdateUserDto implements IUserUpdate {
   @IsOptional()
   @IsMongoId()
   roomId?: string;
+
+  @ApiProperty()
+  @IsEnum(UserRoleEnum)
+  role: UserRoleEnum;
+
+  @ApiProperty()
+  @IsEnum(UserStatusEnum)
+  status: UserStatusEnum;
 }
