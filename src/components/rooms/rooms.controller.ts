@@ -14,7 +14,9 @@ import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { IRoom } from './interfaces/room.interface';
 import { IRoomReturned } from './interfaces/room.returned.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Rooms')
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}

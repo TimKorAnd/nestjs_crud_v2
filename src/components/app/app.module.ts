@@ -8,6 +8,7 @@ import { RoomsModule } from '../rooms/rooms.module';
 import { MessagesModule } from '../messages/messages.module';
 import { configModule } from '../../configure/config.root';
 import { configMongoConnection } from '../../configure/config.mongo.connection';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { configMongoConnection } from '../../configure/config.mongo.connection';
     UsersModule,
     RoomsModule,
     MessagesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

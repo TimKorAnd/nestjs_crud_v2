@@ -16,7 +16,10 @@ import { RoomsService } from '../rooms/rooms.service';
 import { IRoom } from '../rooms/interfaces/room.interface';
 import { IRoomReturned } from '../rooms/interfaces/room.returned.interface';
 import { IUserReturned } from './interfaces/user.returned.interface';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -24,6 +27,7 @@ export class UsersController {
     private readonly roomsService: RoomsService,
   ) {}
 
+  @ApiBody({ type: CreateUserDto })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -39,10 +43,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @ApiBody({ type: UpdateUserDto })
   @Patch(':id')
   update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() update: IUser,
+    @Body() update: UpdateUserDto,
   ) {
     return this.usersService.update(id, update);
   }
@@ -84,16 +89,6 @@ export class UsersController {
       );
     }
     const joinRoom = await this.roomsService.addUserToRoom(userId, joinRoomId);
-
-    /*res.status(200).json({
-        message:
-          {
-            status: 'successful',
-            userId,
-            leftRoomId: leftRoom?._id ?? 'not left the room, because user did`t have a room',
-            joinRoomId: joinRoom?._id ?? 'not join the room, because room not exists',
-          },
-      }); */
   }
 
   @Post('leave-from-room')

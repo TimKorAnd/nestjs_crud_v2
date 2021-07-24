@@ -8,5 +8,5 @@ export interface IUserUpdate {
   email?: string;
   password?: string;
   avatarUrl?: string;
-  roomId?: Room | Types.ObjectId;
+  roomId?: Room | Types.ObjectId | string;
 }

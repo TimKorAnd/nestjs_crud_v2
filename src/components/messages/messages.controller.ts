@@ -13,7 +13,9 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { ParseObjectIdPipe } from '../../pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { IMessage } from './interfaces/message.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Messages')
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}

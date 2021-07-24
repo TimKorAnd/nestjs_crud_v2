@@ -1,4 +1,5 @@
-when populate відсутню в базі айді, то буде нулл, чи то норм для фронта?
+rename
+async validateUser(email: string, password: string): Promise<boolean> { = isValidUserAuth
 
 як позбутися updateRoomDto: UpdateRoomDto в сервісах
 
