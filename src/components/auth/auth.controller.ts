@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -33,6 +34,7 @@ export class AuthController {
 
   @Post('/signup')
   async signup(@Body() signup: SignInDto) {
+    signup.email = signup.email.toLowerCase();
     return this.authService.signup(signup);
   }
 
@@ -61,6 +63,11 @@ export class AuthController {
     console.log('controller signin');
     console.log(user);
     return this.authService.getUserWithTokensForLogin(user);
+  }
+
+  @Get('confirm/:token')
+  confirmSignup(@Param('token') token: string) {
+    return this.authService.confirmSignup(token);
   }
 
   @ApiBearerAuth()

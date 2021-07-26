@@ -33,8 +33,8 @@ export class UsersService {
       .exec();
   }
 
-  findOneByEmail(email: string): Promise<IUserReturned> {
-    return this.userModel.findOne({ email }).lean().exec();
+  findOneByEmail(email: string): Promise<IUser> {
+    return this.userModel.findOne({ email }).exec();
   }
 
   findOne(id: Types.ObjectId): Promise<IUserReturned> {

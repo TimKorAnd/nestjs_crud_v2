@@ -1,4 +1,4 @@
-import { BadRequestException, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -7,7 +7,6 @@ import { IAuthUserReturned } from './interfaces/auth.user.returned.interface';
 import { IAuthUserSignup } from './interfaces/auth.user.signup';
 import { UserRoleEnum } from '../users/enums/user.role.enum';
 import { UserStatusEnum } from '../users/enums/user.status.enum';
-import { IAuthUserCreated } from './interfaces/auth.user.created';
 import { MailerService } from '../mailer/mailer.service';
 import { RedisCacheService } from '../redis-cashe/redis.cache.service';
 import { IAuthUserEmail } from './interfaces/auth.user.email';
@@ -66,15 +65,50 @@ export class AuthService {
     const payload = {
       sub: createdUser._id,
       email: createdUser.email,
+      status: createdUser.status,
     };
     const token = await this.jwtService.sign(payload);
-    //const { password, ...userForEmail } = createdUser; // TODO clear sensitive fields via...
-    const userForEmail = createdUser;
+    this.redisCacheService.set(createdUser._id, token, { ttl: 3600 }); // 1 hour for registration
+    const userForEmail = { _id: null, email: '' };
+    [userForEmail._id, userForEmail.email] = [
+      createdUser._id,
+      createdUser.email,
+    ];
     return this.sendConfirmation(userForEmail as IAuthUserEmail, token);
   }
 
   private sendConfirmation(createdUser: IAuthUserEmail, token: string) {
     this.mailerService.send(createdUser, token);
     return true;
+  }
+
+  async confirmSignup(token: string) {
+    console.log(token);
+    const tokenPayload = await this.jwtService.verify(token);
+    console.log('tokenPayload ');
+    console.log(tokenPayload);
+    console.log(tokenPayload.sub);
+    // const pendingToken = await this.redisCacheService.get(tokenPayload?.sub);
+    const pendingToken = await this.redisCacheService.get(tokenPayload?.sub); // whatever delete
+    console.log('pendingToken ' + pendingToken);
+    const userFromDB = await this.usersService.findOneByEmail(
+      tokenPayload?.email,
+    );
+    console.log('userFromDB ');
+    console.log(userFromDB);
+    if (
+      pendingToken === token &&
+      userFromDB._id.toString() === tokenPayload.sub
+    ) {
+      // signup is succes
+      userFromDB.status = UserStatusEnum.ACTIVE;
+      userFromDB.save();
+      this.redisCacheService.del(tokenPayload.sub);
+      // send onboarding email wit congrats for signin
+      return this.getUserWithTokensForLogin(userFromDB as IAuthUserReturned);
+    } else {
+      // signup fail
+      console.log('signup fail');
+    }
   }
 }
