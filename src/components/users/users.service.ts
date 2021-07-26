@@ -18,6 +18,7 @@ export class UsersService {
     return this.userModel.create({ ...create, password: passwordHash });
   }
 
+  // TODO remove to module Token or like Crypto
   private async getPasswordHash(password: string): Promise<string> {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);

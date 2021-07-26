@@ -7,25 +7,24 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { configAuthJwt } from './config/cofig.auth.jwt.module';
+import { HttpModule } from '@nestjs/axios';
+import { MailerModule } from '../mailer/mailer.module';
+import { MailerService } from '../mailer/mailer.service';
+import { RedisCacheModule } from '../redis-cashe/redis.cache.module';
 
 @Module({
   imports: [
+    RedisCacheModule,
+    HttpModule,
     UsersModule,
     PassportModule,
     ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: 3600,
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    configAuthJwt,
+    MailerModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, MailerService],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 import { Room } from '../../rooms/schema/room.schema';
-import * as mongoose from 'mongoose';
-import { UserRoleEnum } from '../enums/user.role.enum';
-import { UserStatusEnum } from '../enums/user.status.enum';
+import { UserRoleEnum } from '../../users/enums/user.role.enum';
+import { UserStatusEnum } from '../../users/enums/user.status.enum';
+import { IUserReturned } from '../../users/interfaces/user.returned.interface';
 
-export interface IUserReturned {
+export interface IAuthUserCreated {
   _id: Types.ObjectId;
   name?: string;
   email: string;

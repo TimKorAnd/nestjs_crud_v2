@@ -13,7 +13,7 @@ export type UserDocument = User & Document;
   collection: 'users',
 })
 export class User {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, default: 'anon' })
   name: string;
 
   @Prop({ type: String, required: true, unique: true })

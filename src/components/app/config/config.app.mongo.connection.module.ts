@@ -1,6 +1,6 @@
 import { MongooseModule } from '@nestjs/mongoose';
 
-export const configMongoConnection = MongooseModule.forRoot(
+export const configAppMongoConnectionModule = MongooseModule.forRoot(
   process.env.MONGODB_CONNECTION_STRING.toString(),
   {
     useNewUrlParser: true,

@@ -3,7 +3,7 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  HttpStatus,
+  HttpStatus, BadRequestException,
 } from '@nestjs/common';
 
 @Catch()
@@ -12,7 +12,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-
+    console.log(exception);
+    if (exception.isAxiosError && exception?.response?.data) {
+      return response
+        .status(exception.response.data.statusCode)
+        .json(exception.response.data);
+    }
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
