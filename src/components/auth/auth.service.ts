@@ -82,28 +82,30 @@ export class AuthService {
     return true;
   }
 
-  async confirmSignup(token: string) {
-    console.log(token);
-    const tokenPayload = await this.jwtService.verify(token);
-    console.log('tokenPayload ');
-    console.log(tokenPayload);
-    console.log(tokenPayload.sub);
-    // const pendingToken = await this.redisCacheService.get(tokenPayload?.sub);
-    const pendingToken = await this.redisCacheService.get(tokenPayload?.sub); // whatever delete
-    console.log('pendingToken ' + pendingToken);
+  async confirmSignup(mailToken: string) {
+    console.log(mailToken);
+    const mailTokenPayload = await this.jwtService.verify(mailToken);
+    console.log('mailTokenPayload ');
+    console.log(mailTokenPayload);
+    console.log(mailTokenPayload.sub);
+    // const redisPendingToken = await this.redisCacheService.get(mailTokenPayload?.sub);
+    const redisPendingToken = await this.redisCacheService.get(
+      mailTokenPayload?.sub,
+    ); // whatever delete
+    console.log('redisPendingToken ' + redisPendingToken);
     const userFromDB = await this.usersService.findOneByEmail(
-      tokenPayload?.email,
+      mailTokenPayload?.email,
     );
     console.log('userFromDB ');
     console.log(userFromDB);
     if (
-      pendingToken === token &&
-      userFromDB._id.toString() === tokenPayload.sub
+      redisPendingToken === mailToken &&
+      userFromDB._id.toString() === mailTokenPayload.sub
     ) {
       // signup is succes
       userFromDB.status = UserStatusEnum.ACTIVE;
       userFromDB.save();
-      this.redisCacheService.del(tokenPayload.sub);
+      this.redisCacheService.del(mailTokenPayload.sub);
       // send onboarding email wit congrats for signin
       return this.getUserWithTokensForLogin(userFromDB as IAuthUserReturned);
     } else {
