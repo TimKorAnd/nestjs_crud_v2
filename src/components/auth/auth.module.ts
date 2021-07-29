@@ -4,14 +4,13 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { configAuthJwt } from './config/cofig.auth.jwt.module';
 import { HttpModule } from '@nestjs/axios';
 import { MailerModule } from '../mailer/mailer.module';
 import { MailerService } from '../mailer/mailer.service';
-import { RedisCacheModule } from '../redis-cashe/redis.cache.module';
+import { RedisCacheModule } from '../redis-cache/redis.cache.module';
 
 @Module({
   imports: [

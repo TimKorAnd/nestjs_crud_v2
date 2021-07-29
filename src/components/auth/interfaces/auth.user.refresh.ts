@@ -4,12 +4,7 @@ import * as mongoose from 'mongoose';
 import { UserRoleEnum } from '../../users/enums/user.role.enum';
 import { UserStatusEnum } from '../../users/enums/user.status.enum';
 
-export interface IAuthUserSignup {
-  //_id: Types.ObjectId;
-  //name?: string;
-  email: string;
-  password: string;
-  //avatarUrl?: string;
-  //role?: UserRoleEnum;
-  //status?: UserStatusEnum;
+export interface IAuthUserRefresh {
+  userId: string;
+  token: string;
 }

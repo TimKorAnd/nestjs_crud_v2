@@ -45,6 +45,13 @@ export class UsersService {
       .exec();
   }
 
+  findOneDocument(id: Types.ObjectId): Promise<IUser> {
+    return this.userModel
+      .findOne(id)
+      .populate(UsersService.populateFields)
+      .exec();
+  }
+
   update(
     id: Types.ObjectId,
     update: IUserUpdate,

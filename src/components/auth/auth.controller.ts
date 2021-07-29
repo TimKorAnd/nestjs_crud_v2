@@ -20,7 +20,14 @@ import { map } from 'rxjs';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { app } from '../../main';
 import { MailerService } from '../mailer/mailer.service';
-import { IAuthUserReturned } from './interfaces/auth.user.returned.interface';
+import { IAuthUser } from './interfaces/auth.user';
+import { RefreshDto } from './dto/auth.refresh.dto';
+import { IAuthUserCleared } from './interfaces/auth.user.cleared';
+import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
+import { UserWithTokenByRefreshPipe } from '../../pipes/user-with-token-by-refresh.pipe';
+import { IAuthUserRefresh } from './interfaces/auth.user.refresh';
+import { IAuthUserWithTokens } from './interfaces/auth.user-with-tokens';
+import { IAuthUserWithRefreshToken } from './interfaces/auth.user-with-refresh-token';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -53,16 +60,17 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   login(@Request() req): Promise<{
-    user: IAuthUserReturned;
+    user?: IAuthUserCleared;
+    userId?: string;
     accessToken: string;
     refreshToken: string;
   }> {
     const user = req.user;
-    delete req.user; // clear Request obj
+    delete req.user; // clear Request object
 
-    console.log('controller signin');
+    console.log('controller signin->login');
     console.log(user);
-    return this.authService.getUserWithTokensForLogin(user);
+    return this.authService.signin(user);
   }
 
   @Get('confirm/:token')
@@ -72,10 +80,24 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Post('refresh')
+  getRefreshToken(
+    @Body(UserWithTokenByRefreshPipe)
+    userWitRefreshToken: IAuthUserWithRefreshToken,
+  ) {
+    console.log('userWitRefreshToken');
+    console.log(userWitRefreshToken);
+    return this.authService.refresh(userWitRefreshToken);
+  }
+
+  /**
+   * For crefensial test only
+   * @param req
+   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    console.log(req.user);
-    console.log(req.payload);
+  profile(@Request() req) {
     return req.user;
   }
 }

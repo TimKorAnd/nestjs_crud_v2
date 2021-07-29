@@ -25,7 +25,7 @@ export class User {
   @Prop({ type: String, default: null, isOptional: true })
   avatarUrl: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Room' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Room', default: null })
   roomId: Room;
 
   @Prop({

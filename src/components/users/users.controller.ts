@@ -18,6 +18,9 @@ import { IRoomReturned } from '../rooms/interfaces/room.returned.interface';
 import { IUserReturned } from './interfaces/user.returned.interface';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
+import { RoomByIdPipe } from '../../pipes/room-by-id.pipe';
+import { isEmptyOrNull } from '../../helpers/is-empty-obj.helper';
 
 @ApiTags('Users')
 @Controller('users')
@@ -93,23 +96,19 @@ export class UsersController {
 
   @Post('leave-from-room')
   async leaveFromRoom(
-    @Body('userId', ParseObjectIdPipe) userId: Types.ObjectId,
-    @Body('roomId', ParseObjectIdPipe) roomId: Types.ObjectId,
+    @Body('userId', ParseObjectIdPipe, UserByIdPipe) user: IUser,
+    @Body('roomId', ParseObjectIdPipe, RoomByIdPipe) room: IRoomReturned,
   ) {
-    const user: IUserReturned = await this.usersService.update(
-      userId,
-      { roomId: null },
-      { new: false },
-    );
     const leftRoom: IRoomReturned = user.roomId as IRoomReturned; // TODO is normal approach?
-    const leftRoomId: Types.ObjectId = leftRoom?._id;
-    if (!leftRoomId) {
+    if (isEmptyOrNull(leftRoom)) {
       return 'no roomId in user';
     }
-    const leftRoom1 = await this.roomsService.leaveUserFromRoom(
-      userId,
-      leftRoomId,
-    );
-    return leftRoom;
+    user.roomId = null;
+    await user.save();
+    room = await this.roomsService.leaveUserFromRoom(user._id, leftRoom._id);
+    return {
+      user,
+      room,
+    };
   }
 }

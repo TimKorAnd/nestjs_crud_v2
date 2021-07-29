@@ -19,10 +19,6 @@ export class MailerService {
             <a href="${url}">confirm signup</a>></strong>`,
     };
     this.client.send(msg);
-    console.log('mailer sender send');
-    console.log(user);
-    console.log(token);
-    console.log(url);
 
     return true;
   }
