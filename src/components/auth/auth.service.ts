@@ -88,7 +88,7 @@ export class AuthService {
     }); // TODO how refresh generate?
     payload['email'] = user.email;
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '3600s',
+      expiresIn: '60s', // 60s - for test. 3600s - 1h for prod.
     });
     return {
       accessToken,

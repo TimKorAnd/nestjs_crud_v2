@@ -27,17 +27,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!userTokensFromRedis) {
       throw new BadRequestException('invalid credentials, login again');
     }
+    console.log('req.url');
+    console.log(req.url);
     if (bearerToken !== userTokensFromRedis.accessToken) {
       if (
         userTokensFromRedis.refreshToken &&
         bearerToken === userTokensFromRedis.refreshToken
       ) {
-        await this.authService.renewUserTokensInRedis({
+        if (req.url === '/auth/refresh') {
+          return payload;
+        }
+        /*await this.authService.renewUserTokensInRedis({
           userId: payload.sub.toString(),
           accessToken: null,
           refreshToken: userTokensFromRedis.refreshToken,
         });
-        throw new BadRequestException('refresh credentials'); // maybe refresh oneself?
+        throw new BadRequestException('refresh credentials'); // maybe refresh oneself?*/
       }
       await this.authService.redisCacheService.del(payload.sub);
       throw new BadRequestException('invalid credentials, login again');

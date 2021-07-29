@@ -18,7 +18,8 @@ export class MailerService {
       html: `<strong>and easy to do anywhere, even with Node.js
             <a href="${url}">confirm signup</a>></strong>`,
     };
-    this.client.send(msg);
+    console.log(url); // mailer: Your account is temporarily under review. Please contact Support to regain access.
+    // this.client.send(msg); // TODO Please contact Support to regain access.
 
     return true;
   }
