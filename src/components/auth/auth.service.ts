@@ -12,7 +12,6 @@ import { RedisCacheService } from '../redis-cache/redis.cache.service';
 import { IAuthUserEmail } from './interfaces/auth.user.email';
 import { IAuthUserCleared } from './interfaces/auth.user.cleared';
 import { IAuthUserWithTokens } from './interfaces/auth.user-with-tokens';
-import { IAuthUserRefresh } from './interfaces/auth.user.refresh';
 import { IAuthUserWithRefreshToken } from './interfaces/auth.user-with-refresh-token';
 
 @Injectable()
@@ -44,13 +43,10 @@ export class AuthService {
     user: IAuthUser,
   ): Promise<IAuthUserWithTokens> {
     const tokens = this.getBothNewTokens(user);
-    console.log('getCleared before user');
-    console.log(user);
     const userCleared: IAuthUserCleared = this.clearUserFromSensitiveData(
       user,
       ['password'],
     );
-    console.log(userCleared);
     return {
       user: userCleared,
       accessToken: tokens.accessToken,
@@ -111,16 +107,15 @@ export class AuthService {
    * @param pass
    */
   async getValidUser(email: string, pass: string): Promise<IAuthUser> {
-    console.log('service getValidUser');
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new BadRequestException({
         message: `User with email ${email} not found`,
       }); // TODO for test only. Remove email from response
     }
-    if (user.status !== UserStatusEnum.ACTIVE) {
+    /*if (user.status !== UserStatusEnum.ACTIVE) {
       throw new BadRequestException({ message: 'Registration not confirmed' });
-    }
+    }*/
     const isPasswordValid =
       user.password && (await bcrypt.compare(pass, user.password));
     if (!isPasswordValid) {
@@ -152,6 +147,23 @@ export class AuthService {
     return this.sendConfirmation(userForEmail as IAuthUserEmail, token);
   }
 
+  async resend(user: IAuthUser) {
+    if (user.status !== UserStatusEnum.PENDING) {
+      throw new BadRequestException('user is already active');
+    }
+    const payload = {
+      sub: user._id,
+      email: user.email,
+      status: user.status,
+    };
+    const token = await this.jwtService.sign(payload);
+    await this.redisCacheService.del(user._id);
+    this.redisCacheService.set(user._id, token, { ttl: 3600 }); // 1 hour for registration confirm
+    const userForEmail: IAuthUserEmail = { _id: null, email: '' };
+    [userForEmail._id, userForEmail.email] = [user._id, user.email];
+    return this.sendConfirmation(userForEmail as IAuthUserEmail, token);
+  }
+
   private sendConfirmation(createdUser: IAuthUserEmail, token: string) {
     this.mailerService.send(createdUser, token);
     return true;
@@ -172,15 +184,18 @@ export class AuthService {
     const redisPendingToken = await this.redisCacheService.get(
       mailTokenPayload.sub,
     );
+    const userFromDB = await this.usersService.findOneByEmail(
+      mailTokenPayload.email,
+    );
+    if (userFromDB.status !== UserStatusEnum.PENDING) {
+      return 'you registration is already confirmed';
+    }
     if (!redisPendingToken) {
       return 'time for confirm is out, signup again';
     }
     if (redisPendingToken !== mailToken) {
-      return 'confirm fail or you are already confirmed';
+      return 'confirm fail';
     }
-    const userFromDB = await this.usersService.findOneByEmail(
-      mailTokenPayload.email,
-    );
     if (userFromDB && userFromDB._id.toString() === mailTokenPayload.sub) {
       // signup is successful
       userFromDB.status = UserStatusEnum.ACTIVE;
@@ -190,12 +205,11 @@ export class AuthService {
       return ' congrats for confirm your signup';
     } else {
       // signup is fail
-      console.log('confirm failed');
       return 'confirm failed, signup is not complete. try later';
     }
   }
 
-  async refresh(userWitRefreshToken: IAuthUserWithRefreshToken) {
+  /*async refreshOld(userWitRefreshToken: IAuthUserWithRefreshToken) {
     const validTokensFromRedis = await this.getUserTokensFromRedis(
       userWitRefreshToken.user._id.toString(),
     );
@@ -204,6 +218,15 @@ export class AuthService {
       throw new BadRequestException('credentials are insufficient for refresh');
     }
     return this.signin(userWitRefreshToken.user);
+  }*/
+
+  async refresh(userId: string, email: string) {
+    const user = await this.usersService.findOne(userId);
+    if (!user || user.email !== email) {
+      await this.redisCacheService.del(userId);
+      throw new BadRequestException('invalid credentials, login required');
+    }
+    return this.signin(user as IAuthUser);
   }
 
   getUserTokensFromRedis(userId: string) {

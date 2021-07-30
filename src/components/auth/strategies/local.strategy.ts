@@ -14,9 +14,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, pass: string): Promise<IAuthUser> {
-    // Promise<boolean> ?
-    // here check a parameters email & passwoed
-    console.log('local strategy validate');
     return await this.authService.getValidUser(email, pass);
   }
 }

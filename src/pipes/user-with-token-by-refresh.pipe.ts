@@ -20,7 +20,6 @@ export class UserWithTokenByRefreshPipe implements PipeTransform<IAuthUserRefres
       throw new BadRequestException('wrong Body! use DTO for validate !!!');
     }
     const user = await this.usersService.findOne(Types.ObjectId(value.userId));
-    console.log(user);
     if (isEmptyOrNull(user)) {
       throw new BadRequestException('user is not found');
     }

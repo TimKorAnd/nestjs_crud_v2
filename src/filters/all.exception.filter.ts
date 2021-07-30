@@ -12,7 +12,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    console.log(exception);
     if (exception.isAxiosError && exception?.response?.data) {
       return response
         .status(exception.response.data.statusCode)

@@ -9,7 +9,7 @@ export class MailerService {
   ) {}
 
   async send(user, token) {
-    const url = (await app.getUrl()) + '/auth/confirm/' + token;
+    const url = `${await app.getUrl()}/auth/confirm/${token}`;
     const msg = {
       to: 'timkorand+1@gmail.com',
       from: 'timkorand+sendgrip@gmail.com', // Use the email address or domain you verified above

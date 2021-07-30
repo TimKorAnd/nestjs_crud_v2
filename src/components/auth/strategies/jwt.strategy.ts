@@ -2,7 +2,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UpdateUserDto } from '../../users/dto/update-user.dto';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -27,23 +26,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!userTokensFromRedis) {
       throw new BadRequestException('invalid credentials, login again');
     }
-    console.log('req.url');
-    console.log(req.url);
-    if (bearerToken !== userTokensFromRedis.accessToken) {
+    if (req.url === '/auth/refresh') {
       if (
         userTokensFromRedis.refreshToken &&
         bearerToken === userTokensFromRedis.refreshToken
       ) {
-        if (req.url === '/auth/refresh') {
-          return payload;
-        }
-        /*await this.authService.renewUserTokensInRedis({
-          userId: payload.sub.toString(),
-          accessToken: null,
-          refreshToken: userTokensFromRedis.refreshToken,
-        });
-        throw new BadRequestException('refresh credentials'); // maybe refresh oneself?*/
+        return payload; // when bearer contains redis-actual refresh token && request came from refresh token only
       }
+      await this.authService.redisCacheService.del(payload.sub);
+      throw new BadRequestException('invalid credentials, login again');
+    }
+    // if bearer has no redis-actual access token - clear redisTokens & re-login require
+    if (bearerToken !== userTokensFromRedis.accessToken) {
       await this.authService.redisCacheService.del(payload.sub);
       throw new BadRequestException('invalid credentials, login again');
     }

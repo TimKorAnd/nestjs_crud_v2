@@ -37,7 +37,8 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<IUserReturned> {
+  findOne(id: Types.ObjectId | string): Promise<IUserReturned> {
+    id = (typeof id === 'string') ? Types.ObjectId(id) : id;
     return this.userModel
       .findOne(id)
       .populate(UsersService.populateFields)
@@ -47,7 +48,7 @@ export class UsersService {
 
   findOneDocument(id: Types.ObjectId): Promise<IUser> {
     return this.userModel
-      .findOne(id)
+      .findOne({ _id: id })
       .populate(UsersService.populateFields)
       .exec();
   }

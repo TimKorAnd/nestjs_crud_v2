@@ -12,22 +12,14 @@ import { UsersService } from '../users/users.service';
 import { SignInDto } from './dto/auth.signin.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { AuthUserDto } from './dto/auth.user.dto';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { app } from '../../main';
 import { MailerService } from '../mailer/mailer.service';
-import { IAuthUser } from './interfaces/auth.user';
-import { RefreshDto } from './dto/auth.refresh.dto';
-import { IAuthUserCleared } from './interfaces/auth.user.cleared';
-import { UserByIdPipe } from '../../pipes/user-by-id.pipe';
-import { UserWithTokenByRefreshPipe } from '../../pipes/user-with-token-by-refresh.pipe';
-import { IAuthUserRefresh } from './interfaces/auth.user.refresh';
 import { IAuthUserWithTokens } from './interfaces/auth.user-with-tokens';
-import { IAuthUserWithRefreshToken } from './interfaces/auth.user-with-refresh-token';
+import { SignUpDto } from './dto/auth.signup.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -40,18 +32,19 @@ export class AuthController {
   ) {}
 
   @Post('/signup')
-  async signup(@Body() signup: SignInDto) {
+  async signup(@Body() signup: SignUpDto): Promise<boolean> {
     signup.email = signup.email.toLowerCase();
     return this.authService.signup(signup);
   }
 
   @Post('/signin')
   async signin(@Body() signin: SignInDto) {
-    const loginRouteUrl =
-      (await app.getUrl()) +
-      '/' +
-      Reflect.getMetadata(PATH_METADATA, AuthController) +
-      '/login';
+    const appUrl = await app.getUrl();
+    const authControllerUrl = Reflect.getMetadata(
+      PATH_METADATA,
+      AuthController,
+    );
+    const loginRouteUrl = `${appUrl}/${authControllerUrl}/login`;
     return this.httpService
       .post(loginRouteUrl, signin)
       .pipe(map((response) => response.data));
@@ -59,17 +52,9 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  login(@Request() req): Promise<{
-    user?: IAuthUserCleared;
-    userId?: string;
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  login(@Request() req): Promise<IAuthUserWithTokens> {
     const user = req.user;
     delete req.user; // clear Request object
-
-    console.log('controller signin->login');
-    console.log(user);
     return this.authService.signin(user);
   }
 
@@ -78,20 +63,33 @@ export class AuthController {
     return this.authService.confirmSignup(token);
   }
 
-  @ApiBearerAuth()
+  @UseGuards(LocalAuthGuard)
+  @Post('/resend')
+  resend(@Request() req): Promise<boolean> {
+    const user = req.user;
+    delete req.user; // clear Request object
+    return this.authService.resend(user);
+  }
+
+  /*  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
   getRefreshToken(
     @Body(UserWithTokenByRefreshPipe)
     userWitRefreshToken: IAuthUserWithRefreshToken,
   ) {
-    console.log('userWitRefreshToken');
-    console.log(userWitRefreshToken);
-    return this.authService.refresh(userWitRefreshToken);
+    return this.authService.refreshOld(userWitRefreshToken);
+  }*/
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('refresh')
+  getRefreshToken(@Request() req, @Body('email') email: string) {
+    return this.authService.refresh(req.user.sub, email);
   }
 
   /**
-   * For crefensial test only
+   * For credential test only
    * @param req
    */
   @ApiBearerAuth()

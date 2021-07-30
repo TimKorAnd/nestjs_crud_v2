@@ -3,7 +3,7 @@ import { AppModule } from './components/app/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './filters/all.exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { configAppSwagger } from './components/app/config/config.app.swagger';
+import { configAppSwagger } from './config/config.app.swagger';
 
 export let app: INestApplication;
 
